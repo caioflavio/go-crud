@@ -10,3 +10,5 @@ services:
       dockerfile: ./docker/Dockerfile
     ports:
       - "${APP_PORT}:${APP_PORT}"
+    volumes:
+      - ../:/app
