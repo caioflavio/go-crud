@@ -2,8 +2,11 @@ version: "3.9"
 
 services:
   api:
+    container_name: ${APP_NAME}-go-server
+    env_file:
+      - ../.env
     build:
       context: ../
-      dockerfile: docker/Dockerfile
+      dockerfile: ./docker/Dockerfile
     ports:
-      - "8080:8080"
+      - "${APP_PORT}:${APP_PORT}"
