@@ -2,13 +2,16 @@ version: "3.9"
 
 services:
   api:
-    container_name: ${APP_NAME}-go-server
     env_file:
       - ../.env
+    container_name: ${APP_NAME}-go-server
     build:
+      args:
+        - APP_STAGE=local
       context: ../
       dockerfile: ./docker/Dockerfile
+    entrypoint: sh /app/cmd/server/entrypoint.sh
     ports:
       - "${APP_PORT}:${APP_PORT}"
     volumes:
-      - ../:/app
+      - ../:/app/

@@ -1,26 +1,23 @@
 FROM golang:1.20.2
 
+ENV APP_STAGE $APP_STAGE
+
 WORKDIR /app
 
+COPY go.mod ./
 COPY ./ /app/
 
-## Modules Dependency
-
-# .env Manager
-RUN go get github.com/spf13/viper
-
-## Dev Environment Dependencies
-
-# Hot Reloading
-RUN go install github.com/cosmtrek/air@latest 
-RUN export PATH=$PATH:$(go env GOPATH)/bin
-
-COPY go.mod go.sum ./
 RUN go mod download
 RUN go mod tidy
 
-RUN go build -o bin/${APP_NAME} cmd/server/main.go
+RUN if [ "$APP_STAGE" = "local" ]; \
+    then \
+        go install github.com/cosmtrek/air@latest && \
+        export PATH=$PATH:$(go env GOPATH)/bin; \
+fi
 
-EXPOSE 8080
+RUN go build -o ./bin/${APP_NAME} ./cmd/server/main.go;
 
-CMD ["air", "-c", ".air.toml"]
+EXPOSE 8080 
+
+ENTRYPOINT ["./bin/${APP_NAME}"]
